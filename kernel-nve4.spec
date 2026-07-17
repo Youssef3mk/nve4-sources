@@ -10,12 +10,10 @@ Source0: https://cdn.kernel.org/pub/linux/kernel/v7.x/linux-7.1.3.tar.xz
 Source1: kernel-nve4-addons-7.1.3.tar.gz
 
 BuildRequires: gcc, make, bison, flex, openssl-devel, elfutils-devel
-BuildRequires: bc, kmod, cpio, xz, rsync
+BuildRequires: bc, kmod, cpio, xz, rsync, findutils
 BuildRequires: python3, python3-devel
-BuildRequires: dwarves
-BuildRequires: ncurses-devel
-BuildRequires: findutils, diffutils, sed
-BuildRequires: perl
+BuildRequires: dwarves, ncurses-devel
+BuildRequires: diffutils, sed, perl
 
 %description
 Custom Linux kernel %{version} for GK104 (NVE4) with:
@@ -29,11 +27,8 @@ No external firmware files needed.
 patch -p1 < patches/0001-gk104-add-built-in-video-firmware.patch
 
 %build
-if [ -f /boot/config-%{version}-%{_arch} ]; then
-    cp /boot/config-%{version}-%{_arch} .config
-else
-    make defconfig
-fi
+make defconfig
+./scripts/config --enable DRM_NOUVEAU
 ./scripts/config --module DRM_NOUVEAU
 ./scripts/config --enable DRM_NOUVEAU_BACKLIGHT
 ./scripts/config --set-str CONFIG_LOCALVERSION "-nve4"
